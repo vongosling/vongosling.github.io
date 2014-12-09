@@ -154,7 +154,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 <li>Reordering the list of direct superinterfaces of a class or interface.</li>
 <li>Inserting new class or interface types in the type hierarchy.</li>
 </ul>
-<p>Generally,java language is <strong>upwards binary-compatible</strong> with previous version,such as Java SE 6 is upwards binary-compatible with J2SE 5.0 except for some minor incompatibilities.You can get details from <a href="http://www.oracle.com/technetwork/java/javase/compatibility-137541.html#binary" target="_blank" rel="external">here</a>.</p>
+<p>eenerally,java language is <strong>upwards binary-compatible</strong> with previous version,such as Java SE 6 is upwards binary-compatible with J2SE 5.0 except for some minor incompatibilities.You can get details from <a href="http://www.oracle.com/technetwork/java/javase/compatibility-137541.html#binary" target="_blank" rel="external">here</a>.</p>
 <p>Another compatibility form,we call it <strong>source compatibility</strong>,meaning that recompilation is necessary.Java language does not support downward source compatibility. Such as if source files use new language features or Java SE platform APIs, they will not be usable with an earlier version of the Java platform. Usually it will throw similar error like this:</p>
 <pre><code>java.lang.UnsupportedClassVersionError: com.alibaba.mq.core.MessageConsumer :
      Unsupported major.minor version <span class="number">51.0</span>
@@ -165,6 +165,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 <li>Maintenance releases (such as 1.7.25, 1.7.26) do not introduce any new language features or APIs. They will maintain source-compatibility with each other.</li>
 <li>Functionality releases and major releases (such as 1.4.0,5.0,6.0,7.0,8.0) maintain upwards but not downwards source-compatibility.</li>
 </ul>
+<a id="more"></a>
+
 <p>Let’s sum up before going on:</p>
 <ul>
 <li>Document those incompatibility cases as much as possible, even some rare circumstances and corner cases. </li>
@@ -333,7 +335,7 @@ CharSequence;</span>)Z in /home/admin/workspace/kafka/target/classes/org/kafka/t
 <p>In <strong>Dependency Mediator</strong> 2.0 version,you could customize version differentiation strategy,not limited the aformentioned.by the way, also in 2.0,I will improvement compatible dependency mediator, please wait and see.</p>
 <p><h3 id="summary">Summary<h3></h3></h3></p>
 <p>Through this article, you almost calculated the evolution process of the <strong>Dependency Mediator</strong> project.in my opinion,integration with the maven enforcer plugin may be a better choice.After all,I hope <strong>Dependency Mediator</strong> can keep sustainable development.I would try and donate this project to codehaus in the near future.</p>
-<p>If you have better idea or improving suggestion,please contact <a href="&#x6d;&#x61;&#105;&#108;&#x74;&#111;&#58;&#x66;&#x65;&#110;&#x67;&#106;&#105;&#x61;&#x31;&#x30;&#64;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;">&#x66;&#x65;&#110;&#x67;&#106;&#105;&#x61;&#x31;&#x30;&#64;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;</a> or join Tencent QQ group:80524460.</p>
+<p>If you have better idea or improving suggestion,please contact <a href="&#109;&#x61;&#105;&#108;&#x74;&#x6f;&#x3a;&#102;&#101;&#x6e;&#103;&#106;&#105;&#x61;&#x31;&#48;&#64;&#x67;&#x6d;&#97;&#105;&#x6c;&#46;&#x63;&#x6f;&#x6d;">&#102;&#101;&#x6e;&#103;&#106;&#105;&#x61;&#x31;&#48;&#64;&#x67;&#x6d;&#97;&#105;&#x6c;&#46;&#x63;&#x6f;&#x6d;</a> or join Tencent QQ group:80524460.</p>
 
       
     </div>

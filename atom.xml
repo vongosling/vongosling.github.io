@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Passion,Dedication,Innovation]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://vongosling.github.io/"/>
-  <updated>2014-12-09T04:36:05.460Z</updated>
+  <updated>2014-12-09T04:39:32.219Z</updated>
   <id>http://vongosling.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://vongosling.github.io/2014/12/09/Mastering-Component-Compatible-Dependency/"/>
     <id>http://vongosling.github.io/2014/12/09/Mastering-Component-Compatible-Dependency/</id>
     <published>2014-12-09T04:29:34.000Z</published>
-    <updated>2014-12-09T04:32:50.000Z</updated>
+    <updated>2014-12-09T04:39:27.000Z</updated>
     <content type="html"><![CDATA[<ul>
 <li><a href="#preface">Preface</a></li>
 <li><a href="#compatibility">Compatibility</a></li>
@@ -47,7 +47,7 @@
 <li>Reordering the list of direct superinterfaces of a class or interface.</li>
 <li>Inserting new class or interface types in the type hierarchy.</li>
 </ul>
-<p>Generally,java language is <strong>upwards binary-compatible</strong> with previous version,such as Java SE 6 is upwards binary-compatible with J2SE 5.0 except for some minor incompatibilities.You can get details from <a href="http://www.oracle.com/technetwork/java/javase/compatibility-137541.html#binary" target="_blank" rel="external">here</a>.</p>
+<p>eenerally,java language is <strong>upwards binary-compatible</strong> with previous version,such as Java SE 6 is upwards binary-compatible with J2SE 5.0 except for some minor incompatibilities.You can get details from <a href="http://www.oracle.com/technetwork/java/javase/compatibility-137541.html#binary" target="_blank" rel="external">here</a>.</p>
 <p>Another compatibility form,we call it <strong>source compatibility</strong>,meaning that recompilation is necessary.Java language does not support downward source compatibility. Such as if source files use new language features or Java SE platform APIs, they will not be usable with an earlier version of the Java platform. Usually it will throw similar error like this:</p>
 <pre><code>java.lang.UnsupportedClassVersionError: com.alibaba.mq.core.MessageConsumer :
      Unsupported major.minor version <span class="number">51.0</span>
@@ -58,6 +58,8 @@
 <li>Maintenance releases (such as 1.7.25, 1.7.26) do not introduce any new language features or APIs. They will maintain source-compatibility with each other.</li>
 <li>Functionality releases and major releases (such as 1.4.0,5.0,6.0,7.0,8.0) maintain upwards but not downwards source-compatibility.</li>
 </ul>
+<a id="more"></a>
+
 <p>Let’s sum up before going on:</p>
 <ul>
 <li>Document those incompatibility cases as much as possible, even some rare circumstances and corner cases. </li>
@@ -226,13 +228,49 @@ CharSequence;</span>)Z in /home/admin/workspace/kafka/target/classes/org/kafka/t
 <p>In <strong>Dependency Mediator</strong> 2.0 version,you could customize version differentiation strategy,not limited the aformentioned.by the way, also in 2.0,I will improvement compatible dependency mediator, please wait and see.</p>
 <p><h3 id="summary">Summary<h3></h3></h3></p>
 <p>Through this article, you almost calculated the evolution process of the <strong>Dependency Mediator</strong> project.in my opinion,integration with the maven enforcer plugin may be a better choice.After all,I hope <strong>Dependency Mediator</strong> can keep sustainable development.I would try and donate this project to codehaus in the near future.</p>
-<p>If you have better idea or improving suggestion,please contact <a href="&#x6d;&#x61;&#105;&#108;&#x74;&#111;&#58;&#x66;&#x65;&#110;&#x67;&#106;&#105;&#x61;&#x31;&#x30;&#64;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;">&#x66;&#x65;&#110;&#x67;&#106;&#105;&#x61;&#x31;&#x30;&#64;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#x63;&#x6f;&#109;</a> or join Tencent QQ group:80524460.</p>
+<p>If you have better idea or improving suggestion,please contact <a href="&#109;&#x61;&#105;&#108;&#x74;&#x6f;&#x3a;&#102;&#101;&#x6e;&#103;&#106;&#105;&#x61;&#x31;&#48;&#64;&#x67;&#x6d;&#97;&#105;&#x6c;&#46;&#x63;&#x6f;&#x6d;">&#102;&#101;&#x6e;&#103;&#106;&#105;&#x61;&#x31;&#48;&#64;&#x67;&#x6d;&#97;&#105;&#x6c;&#46;&#x63;&#x6f;&#x6d;</a> or join Tencent QQ group:80524460.</p>
 ]]></content>
     <summary type="html">
     <![CDATA[<ul>
 <li><a href="#preface">Preface</a></li>
 <li><a href="#compatibility">Compatibility</a></li>
-<li><a href="#architecture">Component Compa]]>
+<li><a href="#architecture">Component Compatible Dependency</a><ul>
+<li><a href="#interface">Interface-oriented programming</a></li>
+<li><a href="#signature">Single component signature protection</a></li>
+<li><a href="#single">Single component compatibility protection</a></li>
+<li><a href="#multi">Multi-component compatibility compile time checking</a></li>
+</ul>
+</li>
+<li><a href="#summary">Summary</a></li>
+</ul>
+<p><h3 id="preface">Preface<h3></h3></h3></p>
+<p>This article mainly includes three parts.at first,I will introduce compatibility principle(more details see <a href="http://blog.csdn.net/fengjia10/article/details/7799227" target="_blank" rel="external">here</a>) briefly.followed by a detailed elaborating about Java component compatible dependency,including the interface-oriented programming,single component signature protection,single component compatibility protection and multi-component compatibility compile time checking.Finally is the review and prospect,especially about <strong>Dependency Mediator</strong> project.</p>
+<p><h3 id="compatibility">Compatibility<h3></h3></h3></p>
+<p>what is compatibility？it is also the key to understanding the compatible dependency.Compatibility, often catch our eyes through two forms,<strong>binary compatibility</strong>,that means they can run the same executable code, typically machine code for a general purpose computer CPU.within the framework of Release-to-Release Binary Compatibility in SOM (Forman, Conner, Danforth, and Raper, Proceedings of OOPSLA ‘95), Java programming language binaries are binary compatible under all relevant transformations that the authors identify (with some caveats with respect to the addition of instance variables). here is a list of some important binary compatible changes that the Java programming language supports:</p>
+<ul>
+<li>Reimplementing existing methods, constructors, and initializers to improve performance.</li>
+<li>Changing methods or constructors to return values on inputs for which they previously either threw exceptions that normally should not occur or failed by going into an infinite loop or causing a deadlock.</li>
+<li>Adding new fields, methods, or constructors to an existing class or interface.</li>
+<li>Deleting private fields, methods, or constructors of a class.</li>
+<li>When an entire package is updated, deleting default (package-only) access fields, methods, or constructors of classes and interfaces in the package.</li>
+<li>Reordering the fields, methods, or constructors in an existing type declaration.</li>
+<li>Moving a method upward in the class hierarchy.</li>
+<li>Reordering the list of direct superinterfaces of a class or interface.</li>
+<li>Inserting new class or interface types in the type hierarchy.</li>
+</ul>
+<p>eenerally,java language is <strong>upwards binary-compatible</strong> with previous version,such as Java SE 6 is upwards binary-compatible with J2SE 5.0 except for some minor incompatibilities.You can get details from <a href="http://www.oracle.com/technetwork/java/javase/compatibility-137541.html#binary" target="_blank" rel="external">here</a>.</p>
+<p>Another compatibility form,we call it <strong>source compatibility</strong>,meaning that recompilation is necessary.Java language does not support downward source compatibility. Such as if source files use new language features or Java SE platform APIs, they will not be usable with an earlier version of the Java platform. Usually it will throw similar error like this:</p>
+<pre><code>java.lang.UnsupportedClassVersionError: com.alibaba.mq.core.MessageConsumer :
+     Unsupported major.minor version <span class="number">51.0</span>
+     at java.lang.ClassLoader.defineClass1(Native <span class="function"><span class="keyword">Method</span>)
+     <span class="title">at</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">ClassLoader</span>.<span class="title">defineClassCond</span><span class="params">(Unknown Source)</span></span>
+</code></pre><p>Java language source compatibility policy is as follows,except for any incompatibilities listed further below:</p>
+<ul>
+<li>Maintenance releases (such as 1.7.25, 1.7.26) do not introduce any new language features or APIs. They will maintain source-compatibility with each other.</li>
+<li>Functionality releases and major releases (such as 1.4.0,5.0,6.0,7.0,8.0) maintain upwards but not downwards source-compatibility.</li>
+</ul>
+]]>
+    
     </summary>
     
       <category term="Maven" scheme="http://vongosling.github.io/tags/Maven/"/>
