@@ -3,17 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>about | vongosling&#39;s blog</title>
+  <title>vongosling&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="I am a software developer and architect living in Hangzhou China,I like to program and write stuff,making things a reality always make me excited.I love open source and I spend most of spare time stud">
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="http://vongosling.github.io/about/index.html">
+  <meta name="description" content="title: JVM -Xprof profilerdate: 2015-01-09 14:23:01tags:[jvm,profiler,jit]
+categories:Performance
+The -Xprof profiler is the HotSpot profiler. HotSpot works by running Java code in interpreted mode, w">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vongosling's blog">
+<meta property="og:url" content="http://vongosling.github.io/2015/01/09/JVM-Xprof-profiler/">
 <meta property="og:site_name" content="vongosling's blog">
-<meta property="og:description" content="I am a software developer and architect living in Hangzhou China,I like to program and write stuff,making things a reality always make me excited.I love open source and I spend most of spare time stud">
+<meta property="og:description" content="title: JVM -Xprof profilerdate: 2015-01-09 14:23:01tags:[jvm,profiler,jit]
+categories:Performance
+The -Xprof profiler is the HotSpot profiler. HotSpot works by running Java code in interpreted mode, w">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="about">
-<meta name="twitter:description" content="I am a software developer and architect living in Hangzhou China,I like to program and write stuff,making things a reality always make me excited.I love open source and I spend most of spare time stud">
+<meta name="twitter:title" content="vongosling's blog">
+<meta name="twitter:description" content="title: JVM -Xprof profilerdate: 2015-01-09 14:23:01tags:[jvm,profiler,jit]
+categories:Performance
+The -Xprof profiler is the HotSpot profiler. HotSpot works by running Java code in interpreted mode, w">
 
   
     <link rel="alternative" href="/atom.xml" title="vongosling&#39;s blog" type="application/atom+xml">
@@ -83,29 +89,30 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 
       <a href="https://github.com/vongosling"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/8b6b8ccc6da3aa5722903da7b58eb5ab1081adee/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png"></a>
       <div class="outer">
-        <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-JVM-Xprof-profiler" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/about/index.html" class="article-date">
-  <time datetime="2014-12-03T03:21:56.000Z" itemprop="datePublished">12月 3 2014</time>
+    <a href="/2015/01/09/JVM-Xprof-profiler/" class="article-date">
+  <time datetime="2015-01-09T06:30:27.000Z" itemprop="datePublished">1月 9 2015</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      about
-    </h1>
-  
-
-      </header>
-    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>I am a software developer and architect living in Hangzhou China,I like to program and write stuff,making things a reality always make me excited.I love open source and I spend most of spare time studying and contributing to it.<br><a id="more"></a></p>
+        <p>title: JVM -Xprof profiler<br>date: 2015-01-09 14:23:01<br>tags:[jvm,profiler,jit]</p>
+<h2 id="categories:Performance">categories:Performance</h2>
+<p>The -Xprof profiler is the HotSpot profiler. HotSpot works by running Java code in interpreted mode, while running a profiler in parallel. The HotSpot profiler looks for “hot spots” in the code, i.e. methods that the JVM spends a significant amount of time running, and then compiles those methods into native generated code.</p>
+<p>The embedded HotSpot profiler is a specialist low overhead profiler suitable for running alongside the application while not causing too much of an overhead. It does this by being a very very simple profiler, using the lowest overhead techniques available. Firstly it samples the runtime stack (the methods currently being run) at regular intervals. In order to make this sampling have minimal impact, the interval between samples being taken is not too short. But much more importantly, unlike most stack sampling profilers, the stack is not “walked”, i.e. the elements on the stack are not identified in full. Instead only the topmost element of the runtime stack is identified, i.e. the method in which code is being executed at the sample time.</p>
+<p>This sampling of the topmost runtime stack element is sufficient to identify which methods need to be compiled into native code. Basically, if any method is found to be at the top of the stack more than a few times, then the application can probably benefit from having that method compiled. Simple, but powerful.</p>
+<p>So if the HotSpot profiler is always running, what does -Xprof do? It tells the profiler to keep a record of the profile information, and output that information at termination. The output is sent to stdout. Since most of the information needs to be kept by the profiler in any case, this means that -Xprof can actually be run in production without an excessive overhead being put on the application.</p>
+<p>It is worth noting the severe limitations of this profiler. The information can be of very limited use. Because of its “minimal overhead” remit, there is minimal information available from the profiler:</p>
+<h4 id="Each_thread_has_it’s_profile_recorded_separately,_and_is_output_separately_on_thread_termination;_there_is_no_combined_view_of_the_application_runtime-">Each thread has it’s profile recorded separately, and is output separately on thread termination; there is no combined view of the application runtime.</h4>
+<h4 id="Only_the_top_runtime_stack_method_at_sample_time_is_identified,_so_there_is_no_contextual_information;_being_told_that_java-lang-String-equals_is_a_bottleneck_in_your_application_is_almost_useless_since_you_don’t_know_which_of_the_many_methods_which_call_String-equals()_is_causing_most_of_the_trouble-_(Note_that_it_is_fine_for_HotSpot,_HotSpot_doesn’t_care_about_context,_it_just_cares_that_String-equals()_is_a_bottleneck,_so_that_it_knows_it_should_spend_some_time_compiling_that_method_to_native_code-)">Only the top runtime stack method at sample time is identified, so there is no contextual information; being told that java.lang.String.equals is a bottleneck in your application is almost useless since you don’t know which of the many methods which call String.equals() is causing most of the trouble. (Note that it is fine for HotSpot, HotSpot doesn’t care about context, it just cares that String.equals() is a bottleneck, so that it knows it should spend some time compiling that method to native code.)</h4>
+<h4 id="Only_method_execution_is_profiled;_there_is_no_object_creation,_garbage_collection,_or_thread_conflict_profiling-">Only method execution is profiled; there is no object creation, garbage collection, or thread conflict profiling.</h4>
+<p>So is -Xprof useful? Yes, after all you are getting some profiling information for almost nothing. But it isn’t a sufficient profiler to performance tune on it’s own, except for very simple applications. And, of course, you only get output from -Xprof when the JVM includes HotSpot, which is not the case for all JVMs.</p>
+<p>Reprinted from <a href="http://www.javaperformancetuning.com/" target="_blank" rel="external">http://www.javaperformancetuning.com/</a></p>
 
       
     </div>
@@ -118,13 +125,23 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   </div>
   
     
+<nav id="article-nav">
+  
+  
+    <a href="/2014/12/09/Mastering-Component-Compatible-Dependency/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Mastering Component Compatible Dependency</div>
+    </a>
+  
+</nav>
+
   
 </article>
 
  
   <section id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="page-undefined" data-title="about" data-url="http://vongosling.github.io/about/index.html"></div>
+    <div class="ds-thread" data-thread-key="post-JVM-Xprof-profiler" data-title="" data-url="http://vongosling.github.io/2015/01/09/JVM-Xprof-profiler/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -142,6 +159,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   </section>
   <nav id="pagination" >
     
+    
+    <a href="/2014/12/09/Mastering-Component-Compatible-Dependency/" class="alignright next" >next</a>
     
     <div class="clearfix"></div>
 </nav>

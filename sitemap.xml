@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vongosling.github.io/2015/01/09/JVM-Xprof-profiler/</loc>
+    <lastmod>2015-01-09T06:30:27.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://vongosling.github.io/2014/12/09/Mastering-Component-Compatible-Dependency/</loc>
     <lastmod>2014-12-09T04:39:27.000Z</lastmod>
   </url>
