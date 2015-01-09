@@ -88,25 +88,37 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     <article id="post-JVM-Xprof-profiler" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/01/09/JVM-Xprof-profiler/" class="article-date">
-  <time datetime="2015-01-09T06:30:27.000Z" itemprop="datePublished">1月 9 2015</time>
+  <time datetime="2015-01-09T06:23:01.000Z" itemprop="datePublished">1月 9 2015</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Performance/">Performance</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/01/09/JVM-Xprof-profiler/">JVM -Xprof profiler</a>
+    </h1>
+  
+
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>title: JVM -Xprof profiler<br>date: 2015-01-09 14:23:01<br>tags:[jvm,profiler,jit]</p>
-<h2 id="categories:Performance">categories:Performance</h2>
-<p>The -Xprof profiler is the HotSpot profiler. HotSpot works by running Java code in interpreted mode, while running a profiler in parallel. The HotSpot profiler looks for “hot spots” in the code, i.e. methods that the JVM spends a significant amount of time running, and then compiles those methods into native generated code.</p>
+        <p>The -Xprof profiler is the HotSpot profiler. HotSpot works by running Java code in interpreted mode, while running a profiler in parallel. The HotSpot profiler looks for “hot spots” in the code, i.e. methods that the JVM spends a significant amount of time running, and then compiles those methods into native generated code.</p>
 <p>The embedded HotSpot profiler is a specialist low overhead profiler suitable for running alongside the application while not causing too much of an overhead. It does this by being a very very simple profiler, using the lowest overhead techniques available. Firstly it samples the runtime stack (the methods currently being run) at regular intervals. In order to make this sampling have minimal impact, the interval between samples being taken is not too short. But much more importantly, unlike most stack sampling profilers, the stack is not “walked”, i.e. the elements on the stack are not identified in full. Instead only the topmost element of the runtime stack is identified, i.e. the method in which code is being executed at the sample time.</p>
 <p>This sampling of the topmost runtime stack element is sufficient to identify which methods need to be compiled into native code. Basically, if any method is found to be at the top of the stack more than a few times, then the application can probably benefit from having that method compiled. Simple, but powerful.</p>
 <p>So if the HotSpot profiler is always running, what does -Xprof do? It tells the profiler to keep a record of the profile information, and output that information at termination. The output is sent to stdout. Since most of the information needs to be kept by the profiler in any case, this means that -Xprof can actually be run in production without an excessive overhead being put on the application.</p>
 <p>It is worth noting the severe limitations of this profiler. The information can be of very limited use. Because of its “minimal overhead” remit, there is minimal information available from the profiler:</p>
-<h4 id="Each_thread_has_it’s_profile_recorded_separately,_and_is_output_separately_on_thread_termination;_there_is_no_combined_view_of_the_application_runtime-">Each thread has it’s profile recorded separately, and is output separately on thread termination; there is no combined view of the application runtime.</h4>
-<h4 id="Only_the_top_runtime_stack_method_at_sample_time_is_identified,_so_there_is_no_contextual_information;_being_told_that_java-lang-String-equals_is_a_bottleneck_in_your_application_is_almost_useless_since_you_don’t_know_which_of_the_many_methods_which_call_String-equals()_is_causing_most_of_the_trouble-_(Note_that_it_is_fine_for_HotSpot,_HotSpot_doesn’t_care_about_context,_it_just_cares_that_String-equals()_is_a_bottleneck,_so_that_it_knows_it_should_spend_some_time_compiling_that_method_to_native_code-)">Only the top runtime stack method at sample time is identified, so there is no contextual information; being told that java.lang.String.equals is a bottleneck in your application is almost useless since you don’t know which of the many methods which call String.equals() is causing most of the trouble. (Note that it is fine for HotSpot, HotSpot doesn’t care about context, it just cares that String.equals() is a bottleneck, so that it knows it should spend some time compiling that method to native code.)</h4>
-<h4 id="Only_method_execution_is_profiled;_there_is_no_object_creation,_garbage_collection,_or_thread_conflict_profiling-">Only method execution is profiled; there is no object creation, garbage collection, or thread conflict profiling.</h4>
+<h5 id="Each_thread_has_it’s_profile_recorded_separately,_and_is_output_separately_on_thread_termination;_there_is_no_combined_view_of_the_application_runtime-">Each thread has it’s profile recorded separately, and is output separately on thread termination; there is no combined view of the application runtime.</h5>
+<h5 id="Only_the_top_runtime_stack_method_at_sample_time_is_identified,_so_there_is_no_contextual_information;_being_told_that_java-lang-String-equals_is_a_bottleneck_in_your_application_is_almost_useless_since_you_don’t_know_which_of_the_many_methods_which_call_String-equals()_is_causing_most_of_the_trouble-_(Note_that_it_is_fine_for_HotSpot,_HotSpot_doesn’t_care_about_context,_it_just_cares_that_String-equals()_is_a_bottleneck,_so_that_it_knows_it_should_spend_some_time_compiling_that_method_to_native_code-)">Only the top runtime stack method at sample time is identified, so there is no contextual information; being told that java.lang.String.equals is a bottleneck in your application is almost useless since you don’t know which of the many methods which call String.equals() is causing most of the trouble. (Note that it is fine for HotSpot, HotSpot doesn’t care about context, it just cares that String.equals() is a bottleneck, so that it knows it should spend some time compiling that method to native code.)</h5>
+<h5 id="Only_method_execution_is_profiled;_there_is_no_object_creation,_garbage_collection,_or_thread_conflict_profiling-">Only method execution is profiled; there is no object creation, garbage collection, or thread conflict profiling.</h5>
 <p>So is -Xprof useful? Yes, after all you are getting some profiling information for almost nothing. But it isn’t a sufficient profiler to performance tune on it’s own, except for very simple applications. And, of course, you only get output from -Xprof when the JVM includes HotSpot, which is not the case for all JVMs.</p>
 <p>Reprinted from <a href="http://www.javaperformancetuning.com/" target="_blank" rel="external">http://www.javaperformancetuning.com/</a></p>
 
@@ -117,6 +129,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jit/">jit</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/profiler/">profiler</a></li></ul>
+
     </footer>
   </div>
   
@@ -274,7 +288,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/PM/">PM</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/PM/">PM</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Performance/">Performance</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -283,7 +297,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compatible-Dependency/">Compatible Dependency</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/">Maven</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compatible-Dependency/">Compatible Dependency</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/">Maven</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jit/">jit</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/profiler/">profiler</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -292,7 +306,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Compatible-Dependency/" style="font-size: NaNpx;">Compatible Dependency</a><a href="/tags/Maven/" style="font-size: NaNpx;">Maven</a>
+      <a href="/tags/Compatible-Dependency/" style="font-size: NaNpx;">Compatible Dependency</a><a href="/tags/Maven/" style="font-size: NaNpx;">Maven</a><a href="/tags/jit/" style="font-size: NaNpx;">jit</a><a href="/tags/jvm/" style="font-size: NaNpx;">jvm</a><a href="/tags/profiler/" style="font-size: NaNpx;">profiler</a>
     </div>
   </div>
 
@@ -313,7 +327,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
       <ul>
         
           <li>
-            <a href="/2015/01/09/JVM-Xprof-profiler/">(no title)</a>
+            <a href="/2015/01/09/JVM-Xprof-profiler/">JVM -Xprof profiler</a>
           </li>
         
           <li>
